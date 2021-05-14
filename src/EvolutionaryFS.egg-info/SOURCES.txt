@@ -1,0 +1,9 @@
+README.rst
+setup.cfg
+setup.py
+src/EvolutionaryFS.py
+src/EvolutionaryFS.egg-info/PKG-INFO
+src/EvolutionaryFS.egg-info/SOURCES.txt
+src/EvolutionaryFS.egg-info/dependency_links.txt
+src/EvolutionaryFS.egg-info/requires.txt
+src/EvolutionaryFS.egg-info/top_level.txt
