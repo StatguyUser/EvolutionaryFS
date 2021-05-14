@@ -96,7 +96,7 @@ class GeneticAlgorithmFS:
             
             x_test=self.data_dict[i]['x_test'][columns_list]
             y_test=self.data_dict[i]['y_test']
-                        
+            #print('original:',self.data_dict[i]['x_train'][columns_list].shape,'after chromosome:',x_train.shape,'array:',population_array)
             self.model.fit(x_train,y_train)
             y_test_predict=self.model.predict(x_test)
             
@@ -164,18 +164,16 @@ class GeneticAlgorithmFS:
             gene_1=population_matrix[index_run[0]]
             ## cost of gene 1
             fold_cost1=self._getCost(population_array=gene_1)
-            #print('fold_cost1',fold_cost1)
+
             ## gene pool 2
             gene_2=population_matrix[index_run[1]]
             ## cost of gene 2
             fold_cost2=self._getCost(population_array=gene_2)
-            #print('fold_cost2',fold_cost2)
             
             ## gene pool 3
             gene_3=population_matrix[index_run[2]]
             ## cost of gene 2
             fold_cost3=self._getCost(population_array=gene_3)
-            #print('fold_cost3',fold_cost3)
             
             #get best chromosome from 3 and assign best chromosome
             if fold_cost1==max(fold_cost1,fold_cost2,fold_cost3):
@@ -196,33 +194,38 @@ class GeneticAlgorithmFS:
         crsvr_rand_prob=np.random.rand()
         
         if crsvr_rand_prob < self.prob_crossover:
-            index1=np.random.randint(0,len(parent1))
-            index2=np.random.randint(0,len(parent2))
-            
-            #get different indices to make sure crossover happens
-            while index1 == index2:
-                index2=np.random.randint(0,len(parent1))
+            while np.sum(child1)==0 or np.sum(child2)==0:
+                ##initiate again
+                child1=np.empty((0,len(parent1)))
+                child2=np.empty((0,len(parent2)))
+        
+                index1=np.random.randint(0,len(parent1))
+                index2=np.random.randint(0,len(parent2))
                 
-            index_parent1=min(index1,index2)
-            index_parent2=max(index1,index2)
-            
-            #parent1
-            #first segment
-            first_seg_parent1=parent1[:index_parent1]
-            #second segment
-            mid_seg_parent1=parent1[index_parent1:index_parent2+1]
-            #third segment
-            last_seg_parent1=parent1[index_parent2+1:]
-            child1=np.concatenate((first_seg_parent1,mid_seg_parent1,last_seg_parent1))
-            
-            #parent2
-            #first segment
-            first_seg_parent2=parent2[:index_parent1]
-            #second segment
-            mid_seg_parent2=parent2[index_parent1:index_parent2+1]
-            #third segment
-            last_seg_parent2=parent2[index_parent2+1:]
-            child2=np.concatenate((first_seg_parent2,mid_seg_parent2,last_seg_parent2))
+                #get different indices to make sure crossover happens
+                while index1 == index2:
+                    index2=np.random.randint(0,len(parent1))
+                    
+                index_parent1=min(index1,index2)
+                index_parent2=max(index1,index2)
+                
+                #parent1
+                #first segment
+                first_seg_parent1=parent1[:index_parent1]
+                #second segment
+                mid_seg_parent1=parent1[index_parent1:index_parent2+1]
+                #third segment
+                last_seg_parent1=parent1[index_parent2+1:]
+                child1=np.concatenate((first_seg_parent1,mid_seg_parent1,last_seg_parent1))
+                
+                #parent2
+                #first segment
+                first_seg_parent2=parent2[:index_parent1]
+                #second segment
+                mid_seg_parent2=parent2[index_parent1:index_parent2+1]
+                #third segment
+                last_seg_parent2=parent2[index_parent2+1:]
+                child2=np.concatenate((first_seg_parent2,mid_seg_parent2,last_seg_parent2))
             
             return child1,child2
         else:
@@ -232,23 +235,26 @@ class GeneticAlgorithmFS:
         #mutated child 1 placeholder
         mutated_child=np.empty((0,len(child)))
         
-        #get random probability at each index of chromosome and start with 0
-        t=0
-        
-        for cld1 in child:
-            rand_prob_mutation = np.random.rand()
-            if rand_prob_mutation<self.prob_mutation:
-                #swap value
-                if child[t]==0:
-                    child[t]=1
+        while np.sum(mutated_child)==0:
+            mutated_child=np.empty((0,len(child)))
+
+            #get random probability at each index of chromosome and start with 0
+            t=0
+            
+            for cld1 in child:
+                rand_prob_mutation = np.random.rand()
+                if rand_prob_mutation<self.prob_mutation:
+                    #swap value
+                    if child[t]==0:
+                        child[t]=1
+                    else:
+                        child[t]=0
+                    
+                    mutated_child=child
+                #if probability is less
                 else:
-                    child[t]=0
-                
-                mutated_child=child
-            #if probability is less
-            else:
-                mutated_child=child
-            t+=1
+                    mutated_child=child
+                t+=1
             
         return mutated_child
     
@@ -277,9 +283,7 @@ class GeneticAlgorithmFS:
         
         
         if 0 in self.data_dict.keys():
-#            total_columns=len(self.data_dict[0]['x_train'].shape[1]
             total_columns=len(self.columns_list)
-            print('total_columns',total_columns)
 
         ##get population array to begin
         population_array,population_matrix,best_of_a_generation=self._getpopulationMatrix(total_columns=total_columns)
@@ -360,7 +364,6 @@ class GeneticAlgorithmFS:
         #best chromosome, metric and vocabulary
         best_chromosome = best_metric_chromosome_pair[1:]
 
-#        columns_list=list(map(list(self.data_dict[0]['x_train'].columns).__getitem__,self._get_feature_index(best_chromosome)))
         columns_list=list(map(list(self.columns_list).__getitem__,self._get_feature_index(best_chromosome)))
 
         print('========================================== Best result: ',best_metric_chromosome_pair[0],'==========================================')
@@ -369,3 +372,4 @@ class GeneticAlgorithmFS:
         
 if __name__=="__main__":
     print('Evolutionary Algorithm for feature selection')
+    
