@@ -59,7 +59,7 @@ class GeneticAlgorithmFS:
     
     
     '''
-    def __init__(self,model,data_dict,cost_function,average=None,cost_function_improvement='increase',columns_list=[],generations=50,population=40,prob_crossover=0.9,prob_mutation=0.1,run_time=600):
+    def __init__(self,model,data_dict,cost_function,average=None,cost_function_improvement='increase',columns_list=[],generations=50,population=40,prob_crossover=0.9,prob_mutation=0.1,run_time=120):
         self.model=model
         self.data_dict=data_dict
         self.cost_function=cost_function
@@ -83,6 +83,9 @@ class GeneticAlgorithmFS:
             t+=1
         return index_list
     
+    def _getModel(self):
+        return self.model
+    
     def _getCost(self,population_array):
         
         columns_list=list(map(list(self.columns_list).__getitem__,self._get_feature_index(population_array)))
@@ -96,9 +99,10 @@ class GeneticAlgorithmFS:
             
             x_test=self.data_dict[i]['x_test'][columns_list]
             y_test=self.data_dict[i]['y_test']
-            #print('original:',self.data_dict[i]['x_train'][columns_list].shape,'after chromosome:',x_train.shape,'array:',population_array)
-            self.model.fit(x_train,y_train)
-            y_test_predict=self.model.predict(x_test)
+            
+            model=self._getModel()
+            model.fit(x_train,y_train)
+            y_test_predict=model.predict(x_test)
             
             if self.average:
                 fold_cost.append(self.cost_function(y_test,y_test_predict,average=self.average))
