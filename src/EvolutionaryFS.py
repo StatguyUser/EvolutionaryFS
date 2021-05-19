@@ -178,15 +178,24 @@ class GeneticAlgorithmFS:
             gene_3=population_matrix[index_run[2]]
             ## cost of gene 2
             fold_cost3=self._getCost(population_array=gene_3)
-            
-            #get best chromosome from 3 and assign best chromosome
-            if fold_cost1==max(fold_cost1,fold_cost2,fold_cost3):
-                parents=np.vstack((parents,gene_1))
-            elif fold_cost2==max(fold_cost1,fold_cost2,fold_cost3):
-                parents=np.vstack((parents,gene_2))
-            elif fold_cost3==max(fold_cost1,fold_cost2,fold_cost3):
-                parents=np.vstack((parents,gene_3))
-        
+
+            if self.cost_function_improvement=='increase':            
+                #get best chromosome from 3 and assign best chromosome
+                if fold_cost1==max(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_1))
+                elif fold_cost2==max(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_2))
+                elif fold_cost3==max(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_3))
+            elif self.cost_function_improvement=='decrease':
+                #get best chromosome from 3 and assign best chromosome
+                if fold_cost1==min(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_1))
+                elif fold_cost2==min(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_2))
+                elif fold_cost3==min(fold_cost1,fold_cost2,fold_cost3):
+                    parents=np.vstack((parents,gene_3))
+                                
         return parents[0],parents[1]
     
     def _crossover(self,parent1,parent2):

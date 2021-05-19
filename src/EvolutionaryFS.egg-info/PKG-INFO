@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: EvolutionaryFS
-Version: 0.0.3
+Version: 0.0.4
 Summary: Implementation of evolutionary algorithm for machine learning feature selection
 Home-page: https://github.com/StatguyUser/EvolutionaryFS
 Author: StatguyUser
