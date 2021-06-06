@@ -305,7 +305,7 @@ class GeneticAlgorithmFS:
         for genrtn in range(self.generations):
             #if time exceeds, break loop
             if (time.time()-start)//60>self.run_time:
-                print('==========================================Run time exceeded allocated time. Producing best solution generated so far.==========================================')
+                print('================= Run time exceeded allocated time. Producing best solution generated so far. =================')
                 break
             
             #placeholder for saving new generation
@@ -365,7 +365,7 @@ class GeneticAlgorithmFS:
                 #find the best solution for generation based on objective function and stack
                 sorted_best = np.array(sorted(new_population_with_obj_val,key=lambda x:x[0],reverse=False))
 
-            print('==========================================Best performance for genetaion ',genrtn,':',sorted_best[0][0],'==========================================')
+            print('================= Best performance for generation',genrtn,':',sorted_best[0][0],'=================')
             best_of_a_generation=np.vstack((best_of_a_generation,sorted_best[0]))
 
         if self.cost_function_improvement=='increase':
@@ -379,8 +379,8 @@ class GeneticAlgorithmFS:
 
         columns_list=list(map(list(self.columns_list).__getitem__,self._get_feature_index(best_chromosome)))
 
-        print('========================================== Best result: ',best_metric_chromosome_pair[0],'==========================================')
-        print('==========================================Execution time in minutes:',(time.time()-start)//60,'==========================================')
+        print('================= Best result:',best_metric_chromosome_pair[0],'=================')
+        print('================= Execution time in minutes:',(time.time()-start)//60,'=================')
         return columns_list
         
 if __name__=="__main__":
